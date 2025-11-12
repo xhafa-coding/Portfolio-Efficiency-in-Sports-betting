@@ -9,7 +9,6 @@ print("="*80)
 print("GENERATING CALIBRATION PLOT (WITH PROBABILITY REGENERATION)")
 print("="*80)
 
-# Step 1: Regenerate bet data with probabilities
 print("\n[1/3] Regenerating bet data with model probabilities...")
 
 desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop', 'FOOTBALLDATA2')
@@ -35,7 +34,6 @@ for split in splits:
 bet_data = pd.concat(all_bets, ignore_index=True)
 print(f"\n  ✓ Total bets with probabilities: {len(bet_data)}")
 
-# Step 2: Create calibration plot
 print("\n[2/3] Creating calibration plot...")
 
 # Extract predicted probability for the outcome that was bet on
@@ -51,22 +49,19 @@ def get_predicted_prob(row):
 
 bet_data['PredictedProb'] = bet_data.apply(get_predicted_prob, axis=1)
 
-# Create actual win indicator
+
 bet_data['Win'] = (bet_data['Outcome'] == bet_data['ActualResult']).astype(int)
 
-# Remove any NaN probabilities
 bet_data = bet_data.dropna(subset=['PredictedProb'])
 
 print(f"  Valid bets for calibration: {len(bet_data)}")
 
-# Create probability bins
 bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 bin_labels = ['0-10%', '10-20%', '20-30%', '30-40%', '40-50%', 
               '50-60%', '60-70%', '70-80%', '80-90%', '90-100%']
 
 bet_data['ProbBin'] = pd.cut(bet_data['PredictedProb'], bins=bins, labels=bin_labels, include_lowest=True)
 
-# Calculate observed win rate in each bin
 calibration_data = bet_data.groupby('ProbBin', observed=True).agg({
     'Win': ['mean', 'count'],
     'PredictedProb': 'mean'
@@ -74,7 +69,7 @@ calibration_data = bet_data.groupby('ProbBin', observed=True).agg({
 
 calibration_data.columns = ['Bin', 'ObservedWinRate', 'Count', 'MeanPredictedProb']
 
-# Filter out bins with very few observations
+
 calibration_data = calibration_data[calibration_data['Count'] >= 10]
 
 print(f"\n  Calibration Summary:")
@@ -91,7 +86,7 @@ print(f"    Actual Win Rate: {overall_observed:.3f} ({overall_observed*100:.1f}%
 print(f"    Overconfidence: {(overall_predicted - overall_observed):.3f} ({(overall_predicted - overall_observed)*100:.1f} percentage points)")
 print(f"    Brier Score: {brier_score:.4f}")
 
-# Create output directory
+
 output_dir = 'results_output'
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
@@ -126,7 +121,7 @@ if len(calibration_data) > 1:
 
 # Add labels showing counts
 for idx, row in calibration_data.iterrows():
-    # Position label above if below diagonal, below if above diagonal
+   
     if row['ObservedWinRate'] < row['MeanPredictedProb']:
         xytext = (0, -15)
         va = 'top'
@@ -152,7 +147,6 @@ ax.grid(True, alpha=0.3, linestyle='--')
 ax.set_xlim(-0.02, 1.02)
 ax.set_ylim(-0.02, 1.02)
 
-# Add shaded region for overconfidence
 if len(calibration_data) > 0:
     x_fill = np.linspace(0, 1, 100)
     y_lower = np.zeros_like(x_fill)
