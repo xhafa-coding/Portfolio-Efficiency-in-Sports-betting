@@ -210,11 +210,11 @@ def generate_validation_report(results):
                 report.append(f"  p-value: {indep['p_value']:.4f}")
                 
                 if abs(indep['mean_correlation']) > 0.10:
-                    report.append("  ⚠️  Material positive correlation detected")
+                    report.append("Material positive correlation")
                 elif abs(indep['mean_correlation']) > 0.05:
-                    report.append("  ⚠️  Moderate correlation detected")
+                    report.append("Moderate correlation")
                 else:
-                    report.append("  ✓ Independence assumption reasonable")
+                    report.append("Independence assumption reasonable")
             else:
                 report.append("  Insufficient data for test")
     
@@ -280,13 +280,13 @@ def main():
     
     print("\n[1/4] Generating summary tables...")
     tables = generate_results_tables(results)
-    print("  ✓ Comparison table generated")
-    print("  ✓ By-season table generated")
-    print("  ✓ Risk detail table generated")
+    print(" Comparison table generated")
+    print(" By-season table generated")
+    print(" Risk detail table generated")
     
     print("\n[2/4] Generating visualizations...")
     generate_visualizations(results)
-    print("  ✓ All figures saved to results_output/")
+    print(" All figures saved to results_output/")
     
     print("\n[3/4] Generating validation report...")
     validation_report = generate_validation_report(results)
@@ -294,13 +294,11 @@ def main():
     
     with open('validation_report.txt', 'w', encoding='utf-8') as f:
         f.write(validation_report)
-    print("\n  ✓ Validation report saved to validation_report.txt")
+    print("\n Validation report saved to validation_report.txt")
     
     print("\n[4/4] Exporting results...")
     export_to_excel(results)
     generate_latex_tables(results)
-    print("  ✓ Excel file created")
-    print("  ✓ LaTeX tables created")
     
     print("\n" + "="*80)
     print("RESULTS GENERATION COMPLETE")
