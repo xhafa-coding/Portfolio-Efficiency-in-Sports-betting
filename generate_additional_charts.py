@@ -7,7 +7,6 @@ print("="*80)
 print("GENERATING ADDITIONAL CHARTS")
 print("="*80)
 
-# Load the Excel file
 print("\n[1/2] Loading betting results...")
 excel_file = 'betting_results.xlsx'
 
@@ -16,7 +15,7 @@ if not os.path.exists(excel_file):
     print("Please run generate_results.py first to create the Excel file.")
     exit(1)
 
-# Load all strategy tabs
+
 strategies = ['Unconstrained', 'VaR Constrained', 'Half Kelly', 'Quarter Kelly']
 all_data = {}
 
@@ -56,7 +55,6 @@ def get_predicted_prob(row):
 
 bet_data['PredictedProb'] = bet_data.apply(get_predicted_prob, axis=1)
 
-# Remove any NaN probabilities
 bet_data = bet_data.dropna(subset=['PredictedProb'])
 
 # Create probability bins
@@ -137,7 +135,6 @@ print(f"  ✓ Saved: {output_dir}/model_calibration.png")
 # CHART 2: Performance by Season
 print("\n[3/3] Generating Performance by Season...")
 
-# Extract season from date for each strategy
 season_performance = []
 
 for strategy_name, df in all_data.items():
@@ -241,11 +238,3 @@ print(f"  (Lower is better; 0.25 = random guessing)")
 
 print("\n" + "="*80)
 print("CHARTS GENERATED SUCCESSFULLY")
-print("="*80)
-print(f"\nNew charts saved in {output_dir}/:")
-print("  1. model_calibration.png")
-print("  2. performance_by_season.png")
-print("\nThese charts are critical for explaining:")
-print("  - WHY the model failed (calibration)")
-print("  - CONSISTENCY of results across seasons")
-print("="*80)
